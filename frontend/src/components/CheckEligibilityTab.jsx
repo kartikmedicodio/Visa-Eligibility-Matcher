@@ -49,12 +49,12 @@ export default function CheckEligibilityTab({
 
       {checking &&
         createPortal(
-          <div className="processing-overlay">
-            <div className="processing-bubble" />
+          <div className="processing-overlay" role="status" aria-live="polite" aria-label="Analyzing profile">
+            <div className="processing-bubble" aria-hidden="true" />
             <div className="processing-content">
-              <div className="spinner" />
-              <div className="processing-title">Analyzing profile…</div>
-              <div className="processing-subtitle">Matching petition requirements…</div>
+              <div className="spinner" aria-hidden="true" />
+              <div className="processing-title">Analyzing profile...</div>
+              <div className="processing-subtitle">Matching petition requirements...</div>
             </div>
           </div>,
           document.body
