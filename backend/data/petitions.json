@@ -1,0 +1,201 @@
+{
+  "petitions": [
+    {
+      "petition_id": 101,
+      "country": "USA",
+      "visa_type": "H1B",
+      "category": "Employment-Based",
+      "target_profile_type": "Skilled Professional",
+ 
+      "hard_requirements": {
+        "education_level": ["Bachelor", "Master", "PhD"],
+        "job_requires_specialization": true,
+        "employer_sponsorship": true
+      },
+ 
+      "soft_requirements": {
+        "relevant_work_experience_years": ">=1",
+        "field_match": ["Technology", "Engineering", "Healthcare", "Business"]
+      },
+ 
+      "legal_requirements": {
+        "lca_required": true,
+        "wage_protection_required": true
+      },
+ 
+      "disqualifiers": [
+        "No employer sponsor",
+        "Job does not require specialized knowledge",
+        "Education below Bachelor level"
+      ],
+ 
+      "profile_signals": [
+        "Software Engineer",
+        "Data Scientist",
+        "Healthcare Analyst",
+        "Systems Engineer"
+      ],
+ 
+      "edge_case_handling": {
+        "extraordinary_achievements_present": "Deprioritize in favor of O-1",
+        "degree_missing_but_experience_high": "Weak match"
+      },
+ 
+      "tie_breaker_priority": 2,
+      "confidence_level": "Medium"
+    },
+ 
+    {
+      "petition_id": 102,
+      "country": "USA",
+      "visa_type": "O1",
+      "category": "Extraordinary Talent",
+      "target_profile_type": "High-Achiever",
+ 
+      "hard_requirements": {
+        "extraordinary_ability": true,
+        "documented_recognition": true
+      },
+ 
+      "soft_requirements": {
+        "international_awards": true,
+        "peer_recognition": true,
+        "media_coverage": true
+      },
+ 
+      "disqualifiers": [
+        "No proof of national or international acclaim",
+        "Achievements limited to internal company recognition"
+      ],
+ 
+      "profile_signals": [
+        "International awards",
+        "High-impact publications",
+        "Recognized industry leader"
+      ],
+ 
+      "edge_case_handling": {
+        "meets_h1b_requirements_only": "Reject O-1",
+        "startup_founder_with_press": "Strong match"
+      },
+ 
+      "tie_breaker_priority": 1,
+      "confidence_level": "High"
+    },
+ 
+    {
+      "petition_id": 103,
+      "country": "Canada",
+      "visa_type": "ExpressEntry_FSW",
+      "category": "Points-Based PR",
+      "target_profile_type": "Skilled Immigrant",
+ 
+      "hard_requirements": {
+        "skilled_work_experience_years": ">=1",
+        "language_test": ["IELTS", "CELPIP"],
+        "education_level": ["Bachelor", "Master", "PhD"]
+      },
+ 
+      "soft_requirements": {
+        "crs_score": ">=Cutoff",
+        "canadian_work_experience": true
+      },
+ 
+      "disqualifiers": [
+        "Insufficient CRS score",
+        "Unskilled occupation",
+        "No language test"
+      ],
+ 
+      "profile_signals": [
+        "High IELTS score",
+        "Multiple years of skilled experience",
+        "STEM background"
+      ],
+ 
+      "edge_case_handling": {
+        "job_offer_present": "Consider PNP as higher priority",
+        "borderline_crs_score": "Weak match"
+      },
+ 
+      "tie_breaker_priority": 2,
+      "confidence_level": "Medium"
+    },
+ 
+    {
+      "petition_id": 104,
+      "country": "Canada",
+      "visa_type": "PNP",
+      "category": "Province-Based PR",
+      "target_profile_type": "Employer-Linked Candidate",
+ 
+      "hard_requirements": {
+        "provincial_nomination": true,
+        "job_offer": true
+      },
+ 
+      "soft_requirements": {
+        "occupation_in_demand": true,
+        "local_work_experience": true
+      },
+ 
+      "disqualifiers": [
+        "No provincial nomination",
+        "Job offer outside nominating province"
+      ],
+ 
+      "profile_signals": [
+        "Ontario tech job offer",
+        "BC healthcare employment",
+        "Alberta skilled trades"
+      ],
+ 
+      "edge_case_handling": {
+        "high_crs_no_job_offer": "Suggest Express Entry instead",
+        "job_offer_low_skill": "Reject"
+      },
+ 
+      "tie_breaker_priority": 1,
+      "confidence_level": "High"
+    },
+ 
+    {
+      "petition_id": 105,
+      "country": "Canada",
+      "visa_type": "StartupVisa",
+      "category": "Entrepreneurial PR",
+      "target_profile_type": "Founder / Innovator",
+ 
+      "hard_requirements": {
+        "innovative_business": true,
+        "designated_org_support": true,
+        "settlement_funds": true
+      },
+ 
+      "soft_requirements": {
+        "tech_focus": true,
+        "scalable_model": true
+      },
+ 
+      "disqualifiers": [
+        "Traditional small business",
+        "No designated organization backing"
+      ],
+ 
+      "profile_signals": [
+        "Startup founder",
+        "VC-backed idea",
+        "Incubator acceptance"
+      ],
+ 
+      "edge_case_handling": {
+        "employee_profile_only": "Reject",
+        "founder_without_funding": "Weak match"
+      },
+ 
+      "tie_breaker_priority": 1,
+      "confidence_level": "High"
+    }
+  ]
+}
+

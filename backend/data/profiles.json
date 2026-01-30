@@ -1,0 +1,212 @@
+{
+  "profiles": [
+    {
+      "profile_id": "P101",
+      "full_name": "Sarah Lewis",
+      "citizenship": "India",
+      "current_country": "USA",
+      "target_countries": ["USA"],
+      "target_profile_type": "Skilled Professional",
+ 
+      "education": {
+        "highest_level": "Master",
+        "fields": ["Computer Science", "Artificial Intelligence"]
+      },
+ 
+      "employment": {
+        "current_role": "Software Engineer",
+        "industry": "Technology",
+        "years_of_experience": 3,
+        "job_requires_specialization": true,
+        "employer_sponsorship_available": true
+      },
+ 
+      "skills": ["Python", "Java", "Machine Learning", "Deep Learning"],
+ 
+      "legal_status": {
+        "current_visa": "F1_STEM_OPT"
+      },
+ 
+      "language_tests": {},
+ 
+      "business_profile": null,
+ 
+      "signals": [
+        "Software Engineer",
+        "Data Scientist"
+      ],
+ 
+      "edge_case_flags": {
+        "extraordinary_achievements_present": false,
+        "degree_missing_but_experience_high": false
+      }
+    },
+ 
+    {
+      "profile_id": "P102",
+      "full_name": "David Harper",
+      "citizenship": "USA",
+      "current_country": "USA",
+      "target_countries": ["USA"],
+      "target_profile_type": "High-Achiever",
+ 
+      "education": {
+        "highest_level": "PhD",
+        "fields": ["Physics"]
+      },
+ 
+      "employment": {
+        "current_role": "Research Scientist",
+        "industry": "Science",
+        "years_of_experience": 4
+      },
+ 
+      "achievements": {
+        "extraordinary_ability": true,
+        "international_awards": true,
+        "peer_recognition": true,
+        "media_coverage": true,
+        "high_impact_publications": true
+      },
+ 
+      "legal_status": {
+        "current_visa": "H1B_EXPIRED"
+      },
+ 
+      "signals": [
+        "International awards",
+        "High-impact publications",
+        "Recognized industry leader"
+      ],
+ 
+      "edge_case_flags": {
+        "meets_h1b_requirements_only": false,
+        "startup_founder_with_press": false
+      }
+    },
+ 
+    {
+      "profile_id": "P103",
+      "full_name": "James Thompson",
+      "citizenship": "United Kingdom",
+      "current_country": "UK",
+      "target_countries": ["Canada"],
+      "target_profile_type": "Skilled Immigrant",
+ 
+      "education": {
+        "highest_level": "Master",
+        "fields": ["Computer Science"]
+      },
+ 
+      "employment": {
+        "current_role": "Software Engineer",
+        "industry": "Technology",
+        "years_of_experience": 5
+      },
+ 
+      "language_tests": {
+        "IELTS": 8
+      },
+ 
+      "canada_profile": {
+        "crs_score_estimate": 495,
+        "canadian_work_experience": false,
+        "job_offer": false
+      },
+ 
+      "signals": [
+        "High IELTS score",
+        "Multiple years of skilled experience",
+        "STEM background"
+      ],
+ 
+      "edge_case_flags": {
+        "job_offer_present": false,
+        "borderline_crs_score": false
+      }
+    },
+ 
+    {
+      "profile_id": "P104",
+      "full_name": "Lily Zhang",
+      "citizenship": "China",
+      "current_country": "China",
+      "target_countries": ["Canada"],
+      "target_profile_type": "Employer-Linked Candidate",
+ 
+      "education": {
+        "highest_level": "Bachelor",
+        "fields": ["Nursing"]
+      },
+ 
+      "employment": {
+        "current_role": "Registered Nurse",
+        "industry": "Healthcare",
+        "years_of_experience": 3
+      },
+ 
+      "language_tests": {
+        "IELTS": 7
+      },
+ 
+      "canada_profile": {
+        "job_offer": true,
+        "job_offer_province": "British Columbia",
+        "provincial_nomination": true,
+        "occupation_in_demand": true
+      },
+ 
+      "signals": [
+        "BC healthcare employment"
+      ],
+ 
+      "edge_case_flags": {
+        "high_crs_no_job_offer": false,
+        "job_offer_low_skill": false
+      }
+    },
+ 
+    {
+      "profile_id": "P105",
+      "full_name": "Mark Johnson",
+      "citizenship": "USA",
+      "current_country": "USA",
+      "target_countries": ["Canada"],
+      "target_profile_type": "Founder / Innovator",
+ 
+      "education": {
+        "highest_level": "Master",
+        "fields": ["Business Administration"]
+      },
+ 
+      "employment": null,
+ 
+      "business_profile": {
+        "founder": true,
+        "innovative_business": true,
+        "tech_focus": true,
+        "scalable_model": true,
+        "designated_org_support": true,
+        "settlement_funds": true,
+        "funding_source": "VC",
+        "funding_secured": true
+      },
+ 
+      "language_tests": {
+        "IELTS": 6
+      },
+ 
+      "signals": [
+        "Startup founder",
+        "VC-backed idea",
+        "Incubator acceptance"
+      ],
+ 
+      "edge_case_flags": {
+        "employee_profile_only": false,
+        "founder_without_funding": false
+      }
+    }
+  ]
+}
+
