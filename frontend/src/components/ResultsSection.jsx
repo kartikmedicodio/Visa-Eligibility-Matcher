@@ -191,7 +191,7 @@ export default function ResultsSection({
         )}
 
         <p style={{ color: 'var(--zinc-400)', marginBottom: '1rem', fontSize: '0.9rem' }}>
-          Results sorted by matching score (highest first). Click the dropdown to view full details.
+          Results sorted by matching score (highest first). Click a card or the dropdown to view full details.
         </p>
 
         <ul className="results-list" style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -203,9 +203,15 @@ export default function ResultsSection({
             const scoreClass = getScoreClass(score);
             const isExpanded = expandedId === result.petition_id;
 
+            const toggleExpanded = () => setExpandedId(isExpanded ? null : result.petition_id);
+
             return (
               <li
                 key={result.petition_id}
+                role="button"
+                tabIndex={0}
+                onClick={toggleExpanded}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleExpanded(); } }}
                 className={`result-list-item result-card-rounded ${eligible ? 'eligible' : ''}`}
                 style={{
                   borderRadius: '14px',
@@ -215,6 +221,7 @@ export default function ResultsSection({
                   boxShadow: eligible ? '0 0 20px rgba(168, 85, 247, 0.15)' : 'none',
                   backdropFilter: 'blur(12px)',
                   WebkitBackdropFilter: 'blur(12px)',
+                  cursor: 'pointer',
                 }}
               >
                 <div
@@ -243,7 +250,7 @@ export default function ResultsSection({
                     </span>
                     <button
                       type="button"
-                      onClick={() => setExpandedId(isExpanded ? null : result.petition_id)}
+                      onClick={(e) => { e.stopPropagation(); toggleExpanded(); }}
                       className="result-dropdown-trigger"
                       aria-expanded={isExpanded}
                       aria-label={isExpanded ? 'Collapse details' : 'View details'}
@@ -285,7 +292,11 @@ export default function ResultsSection({
                   <div className="error" style={{ marginTop: '0.75rem' }}>{result.error}</div>
                 )}
 
-                {!hasError && isExpanded && <ResultDetails result={result} />}
+                {!hasError && isExpanded && (
+                  <div onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+                    <ResultDetails result={result} />
+                  </div>
+                )}
               </li>
             );
           })}

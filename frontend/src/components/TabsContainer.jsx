@@ -26,20 +26,24 @@ export default function TabsContainer({
   return (
     <div className="tabs-container">
       <div className="tabs-list" role="tablist">
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            role="tab"
-            aria-selected={activeTab === tab.id}
-            aria-controls={`panel-${tab.id}`}
-            id={`tab-${tab.id}`}
-            className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
-            onClick={() => onTabChange(tab.id)}
-          >
-            {tab.label}
-          </button>
-        ))}
+        {TABS.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              aria-controls={`panel-${tab.id}`}
+              id={`tab-${tab.id}`}
+              className={`tab-button${isActive ? ' active' : ''}`}
+              onClick={() => onTabChange(tab.id)}
+              tabIndex={isActive ? 0 : -1}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
       {activeTab === 'profiles' && (

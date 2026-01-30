@@ -1,5 +1,8 @@
 import { createPortal } from 'react-dom';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import SectionInView from './SectionInView';
+
+const LOTTIE_SRC = '/Ai-powered%20marketing%20tools%20abstract.lottie';
 
 export default function CheckEligibilityTab({
   profiles,
@@ -52,9 +55,11 @@ export default function CheckEligibilityTab({
           <div className="processing-overlay" role="status" aria-live="polite" aria-label="Analyzing profile">
             <div className="processing-bubble" aria-hidden="true" />
             <div className="processing-content">
-              <div className="spinner" aria-hidden="true" />
+              <div className="lottie-loading" aria-hidden="true">
+                <DotLottieReact src={LOTTIE_SRC} loop autoplay style={{ width: 200, height: 200 }} />
+              </div>
               <div className="processing-title">Analyzing profile...</div>
-              <div className="processing-subtitle">Matching petition requirements...</div>
+              <div className="processing-subtitle">AI is matching profile with petition criteria...</div>
             </div>
           </div>,
           document.body

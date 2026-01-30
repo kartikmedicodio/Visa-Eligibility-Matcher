@@ -26,7 +26,6 @@ function App() {
         const res = await profilesAPI.getAll();
         if (!cancelled) {
           setProfiles(res.data ?? []);
-          if (res.data?.length && !selectedProfileId) setSelectedProfileId(res.data[0].profile_id);
         }
       } catch (e) {
         if (!cancelled) setError(e.message);
@@ -45,7 +44,6 @@ function App() {
         const res = await petitionsAPI.getAll();
         if (!cancelled) {
           setPetitions(res.data ?? []);
-          if (res.data?.length && !selectedPetitionId) setSelectedPetitionId(String(res.data[0].petition_id));
         }
       } catch (e) {
         if (!cancelled) setError(e.message);
