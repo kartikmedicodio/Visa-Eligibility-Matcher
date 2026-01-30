@@ -1,37 +1,140 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
 import './App.css';
-import PetitionList from './components/PetitionList';
-import ProfileList from './components/ProfileList';
-import EligibilityChecker from './components/EligibilityChecker';
-import PetitionDetail from './components/PetitionDetail';
-import ProfileDetail from './components/ProfileDetail';
+import { profilesAPI, petitionsAPI, eligibilityAPI } from './services/api';
+import TabsContainer from './components/TabsContainer';
+import ResultsSection from './components/ResultsSection';
 
 function App() {
-  return (
-    <Router>
-      <div className="app">
-        <nav className="navbar">
-          <div className="nav-container">
-            <h1 className="nav-title">Visa Eligibility Matcher</h1>
-            <div className="nav-links">
-              <Link to="/" className="nav-link">Petitions</Link>
-              <Link to="/profiles" className="nav-link">Profiles</Link>
-              <Link to="/eligibility" className="nav-link">Check Eligibility</Link>
-            </div>
-          </div>
-        </nav>
+  const [profiles, setProfiles] = useState([]);
+  const [petitions, setPetitions] = useState([]);
+  const [loadingProfiles, setLoadingProfiles] = useState(true);
+  const [loadingPetitions, setLoadingPetitions] = useState(true);
+  const [selectedProfileId, setSelectedProfileId] = useState('');
+  const [selectedPetitionId, setSelectedPetitionId] = useState('');
+  const [results, setResults] = useState(null);
+  const [checking, setChecking] = useState(false);
+  const [error, setError] = useState(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [showNewApplication, setShowNewApplication] = useState(false);
+  const [activeTab, setActiveTab] = useState('profiles');
 
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={<PetitionList />} />
-            <Route path="/petitions/:id" element={<PetitionDetail />} />
-            <Route path="/profiles" element={<ProfileList />} />
-            <Route path="/profiles/:id" element={<ProfileDetail />} />
-            <Route path="/eligibility" element={<EligibilityChecker />} />
-          </Routes>
-        </main>
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        setLoadingProfiles(true);
+        const res = await profilesAPI.getAll();
+        if (!cancelled) {
+          setProfiles(res.data ?? []);
+          if (res.data?.length && !selectedProfileId) setSelectedProfileId(res.data[0].profile_id);
+        }
+      } catch (e) {
+        if (!cancelled) setError(e.message);
+      } finally {
+        if (!cancelled) setLoadingProfiles(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        setLoadingPetitions(true);
+        const res = await petitionsAPI.getAll();
+        if (!cancelled) {
+          setPetitions(res.data ?? []);
+          if (res.data?.length && !selectedPetitionId) setSelectedPetitionId(String(res.data[0].petition_id));
+        }
+      } catch (e) {
+        if (!cancelled) setError(e.message);
+      } finally {
+        if (!cancelled) setLoadingPetitions(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const h = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      if (h > 0) setScrollProgress((window.scrollY / h) * 100);
+    };
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const handleCheckEligibility = useCallback(async () => {
+    if (!selectedProfileId) return;
+    setError(null);
+    setResults(null);
+    setChecking(true);
+    try {
+      const res = await eligibilityAPI.check(selectedProfileId);
+      setResults(res.data ?? []);
+      setShowNewApplication(true);
+    } catch (e) {
+      setError(e.response?.data?.error || e.message || 'Failed to check eligibility');
+    } finally {
+      setChecking(false);
+    }
+  }, [selectedProfileId]);
+
+  const handleNewApplication = useCallback(() => {
+    setResults(null);
+    setShowNewApplication(false);
+    setError(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  return (
+    <div className="app">
+      <div className="scroll-progress" style={{ width: `${scrollProgress}%` }} />
+
+      <div className="background-orbs">
+        <div className="orb orb-1" />
+        <div className="orb orb-2" />
       </div>
-    </Router>
+      <div className="floating-balls">
+        <div className="floating-ball" />
+        <div className="floating-ball" />
+        <div className="floating-ball" />
+        <div className="floating-ball" />
+      </div>
+
+      <header className="header">
+        <div className="header-content">
+          <h1 className="header-title">Visa Eligibility Matching System</h1>
+        </div>
+      </header>
+
+      <main className="main-content">
+        <TabsContainer
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          profiles={profiles}
+          petitions={petitions}
+          loadingProfiles={loadingProfiles}
+          loadingPetitions={loadingPetitions}
+          selectedProfileId={selectedProfileId}
+          selectedPetitionId={selectedPetitionId}
+          onSelectProfile={setSelectedProfileId}
+          onSelectPetition={setSelectedPetitionId}
+          onCheckEligibility={handleCheckEligibility}
+          checking={checking}
+          error={error}
+        />
+
+        {activeTab === 'check' && results != null && (
+          <ResultsSection
+            results={results}
+            selectedProfileId={selectedProfileId}
+            profiles={profiles}
+          />
+        )}
+      </main>
+    </div>
   );
 }
 

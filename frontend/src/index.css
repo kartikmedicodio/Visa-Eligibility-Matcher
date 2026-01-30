@@ -1,50 +1,59 @@
 :root {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  --purple-accent: #a855f7;
+  --purple-dark: #7c3aed;
+  --purple-light: #c084fc;
+  --blue-accent: #3b82f6;
+  --dark-bg: #0a0a0a;
+  --dark-charcoal: #18181b;
+  --zinc-border: #27272a;
+  --zinc-700: #3f3f46;
+  --zinc-500: #71717a;
+  --zinc-400: #a1a1aa;
+  --zinc-300: #d4d4d8;
+  --zinc-200: #e4e4e7;
+  --white: #ffffff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light;
-  color: #213547;
-  background-color: #f5f5f5;
-
+  color-scheme: dark;
+  color: var(--zinc-200);
+  background-color: var(--dark-bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-size: clamp(0.875rem, 0.8vw + 0.5rem, 1rem);
 }
 
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
-h1 {
-  font-size: 2.5em;
-  line-height: 1.1;
-  margin-bottom: 1rem;
+#root {
+  min-width: 0;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
-h2 {
-  font-size: 2em;
-  line-height: 1.2;
-  margin-bottom: 0.75rem;
-}
-
-h3 {
-  font-size: 1.5em;
-  line-height: 1.3;
-  margin-bottom: 0.5rem;
-}
-
-h4 {
-  font-size: 1.25em;
-  line-height: 1.4;
-  margin-bottom: 0.5rem;
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
