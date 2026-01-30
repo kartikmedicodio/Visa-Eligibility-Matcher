@@ -65,6 +65,11 @@ function App() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Clear results when user changes the selected profile (must check again)
+  useEffect(() => {
+    setResults(null);
+  }, [selectedProfileId]);
+
   const handleCheckEligibility = useCallback(async () => {
     if (!selectedProfileId) return;
     setError(null);
