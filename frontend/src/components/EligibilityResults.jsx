@@ -77,6 +77,22 @@ function EligibilityResults({ results }) {
                 </div>
               </div>
 
+              {result.points_earned !== undefined && result.total_points !== undefined && (
+                <div style={{ marginTop: '1rem', padding: '1rem', background: '#f8f9fa', borderRadius: '4px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <strong>Points-Based Scoring:</strong>
+                    <span style={{ fontSize: '1.1rem', fontWeight: '600' }}>
+                      {result.points_earned} / {result.total_points} points
+                    </span>
+                  </div>
+                  {result.match_percentage !== undefined && (
+                    <div style={{ color: '#666', fontSize: '0.9rem' }}>
+                      Match Percentage: {result.match_percentage.toFixed(1)}%
+                    </div>
+                  )}
+                </div>
+              )}
+
               {result.reasoning && result.reasoning.length > 0 && (
                 <div className="reason-text" style={{ marginTop: '1rem' }}>
                   <strong>Normalized Reasoning:</strong>
@@ -105,7 +121,19 @@ function EligibilityResults({ results }) {
                       </div>
                       {details.score !== undefined && details.max_score !== undefined && (
                         <div className="breakdown-score">
-                          Score: {details.score} / {details.max_score}
+                          Points: {details.score} / {details.max_score}
+                        </div>
+                      )}
+                      {details.points && (
+                        <div style={{ marginTop: '0.5rem' }}>
+                          <strong>Points Breakdown:</strong>
+                          <ul style={{ marginLeft: '1.5rem', marginTop: '0.25rem' }}>
+                            {Object.entries(details.points).map(([key, value]) => (
+                              <li key={key} style={{ fontSize: '0.9rem' }}>
+                                {key.replace(/_/g, ' ')}: {value} points
+                              </li>
+                            ))}
+                          </ul>
                         </div>
                       )}
                       {details.match_details && (

@@ -115,6 +115,70 @@ function PetitionDetail() {
           </div>
         )}
 
+        {petition.scoring_weights && (
+          <div className="detail-section">
+            <div className="detail-section-title">Scoring Weights (Points System)</div>
+            <div className="detail-item">
+              <span className="detail-label">Total Points:</span>
+              <span className="detail-value" style={{ fontWeight: '600', fontSize: '1.1rem' }}>
+                {petition.scoring_weights.total_points} points
+              </span>
+            </div>
+            
+            {petition.scoring_weights.hard_requirements && (
+              <div style={{ marginTop: '1rem' }}>
+                <strong>Hard Requirements:</strong>
+                <ul style={{ marginLeft: '1.5rem', marginTop: '0.5rem' }}>
+                  {Object.entries(petition.scoring_weights.hard_requirements).map(([key, value]) => (
+                    <li key={key} style={{ marginBottom: '0.25rem' }}>
+                      {key.replace(/_/g, ' ')}: <strong>{value} points</strong>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
+            {petition.scoring_weights.soft_requirements && (
+              <div style={{ marginTop: '1rem' }}>
+                <strong>Soft Requirements:</strong>
+                <ul style={{ marginLeft: '1.5rem', marginTop: '0.5rem' }}>
+                  {Object.entries(petition.scoring_weights.soft_requirements).map(([key, value]) => (
+                    <li key={key} style={{ marginBottom: '0.25rem' }}>
+                      {key.replace(/_/g, ' ')}: <strong>{value} points</strong>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
+            {petition.scoring_weights.legal_requirements && (
+              <div style={{ marginTop: '1rem' }}>
+                <strong>Legal Requirements:</strong>
+                <ul style={{ marginLeft: '1.5rem', marginTop: '0.5rem' }}>
+                  {Object.entries(petition.scoring_weights.legal_requirements).map(([key, value]) => (
+                    <li key={key} style={{ marginBottom: '0.25rem' }}>
+                      {key.replace(/_/g, ' ')}: <strong>{value} points</strong>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
+            {petition.scoring_weights.bonus_points && (
+              <div style={{ marginTop: '1rem' }}>
+                <strong>Bonus Points:</strong>
+                <ul style={{ marginLeft: '1.5rem', marginTop: '0.5rem' }}>
+                  {Object.entries(petition.scoring_weights.bonus_points).map(([key, value]) => (
+                    <li key={key} style={{ marginBottom: '0.25rem' }}>
+                      {key.replace(/_/g, ' ')}: <strong>{value} points</strong>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="detail-section">
           <div className="detail-item">
             <span className="detail-label">Tie Breaker Priority:</span>

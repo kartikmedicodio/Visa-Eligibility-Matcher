@@ -41,6 +41,27 @@
         "degree_missing_but_experience_high": "Weak match"
       },
  
+      "scoring_weights": {
+        "total_points": 100,
+        "hard_requirements": {
+          "education_level": 30,
+          "job_requires_specialization": 20,
+          "employer_sponsorship": 25
+        },
+        "soft_requirements": {
+          "relevant_work_experience_years": 10,
+          "field_match": 10
+        },
+        "legal_requirements": {
+          "lca_required": 3,
+          "wage_protection_required": 2
+        },
+        "bonus_points": {
+          "skills_alignment": 5,
+          "visa_status_compatibility": 5
+        }
+      },
+ 
       "tie_breaker_priority": 2,
       "confidence_level": "Medium"
     },
@@ -77,6 +98,23 @@
       "edge_case_handling": {
         "meets_h1b_requirements_only": "Reject O-1",
         "startup_founder_with_press": "Strong match"
+      },
+ 
+      "scoring_weights": {
+        "total_points": 100,
+        "hard_requirements": {
+          "extraordinary_ability": 40,
+          "documented_recognition": 30
+        },
+        "soft_requirements": {
+          "international_awards": 10,
+          "peer_recognition": 10,
+          "media_coverage": 5
+        },
+        "bonus_points": {
+          "high_impact_publications": 3,
+          "industry_leadership": 2
+        }
       },
  
       "tie_breaker_priority": 1,
@@ -118,6 +156,23 @@
         "borderline_crs_score": "Weak match"
       },
  
+      "scoring_weights": {
+        "total_points": 100,
+        "hard_requirements": {
+          "skilled_work_experience_years": 25,
+          "language_test": 20,
+          "education_level": 25
+        },
+        "soft_requirements": {
+          "crs_score": 20,
+          "canadian_work_experience": 10
+        },
+        "bonus_points": {
+          "stem_background": 5,
+          "high_language_score": 5
+        }
+      },
+ 
       "tie_breaker_priority": 2,
       "confidence_level": "Medium"
     },
@@ -153,6 +208,18 @@
       "edge_case_handling": {
         "high_crs_no_job_offer": "Suggest Express Entry instead",
         "job_offer_low_skill": "Reject"
+      },
+ 
+      "scoring_weights": {
+        "total_points": 100,
+        "hard_requirements": {
+          "provincial_nomination": 40,
+          "job_offer": 35
+        },
+        "soft_requirements": {
+          "occupation_in_demand": 15,
+          "local_work_experience": 10
+        }
       },
  
       "tie_breaker_priority": 1,
@@ -191,6 +258,23 @@
       "edge_case_handling": {
         "employee_profile_only": "Reject",
         "founder_without_funding": "Weak match"
+      },
+ 
+      "scoring_weights": {
+        "total_points": 100,
+        "hard_requirements": {
+          "innovative_business": 30,
+          "designated_org_support": 30,
+          "settlement_funds": 20
+        },
+        "soft_requirements": {
+          "tech_focus": 10,
+          "scalable_model": 10
+        },
+        "bonus_points": {
+          "vc_backing": 5,
+          "incubator_support": 5
+        }
       },
  
       "tie_breaker_priority": 1,
