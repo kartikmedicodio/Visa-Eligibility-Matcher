@@ -178,7 +178,7 @@ export default function ResultsSection({
 
   return (
     <SectionInView>
-      <div ref={resultRef} id="results-section">
+      <div ref={resultRef} id="results-section" className="glass-panel" style={{ marginTop: '0.5rem' }}>
         <span className="section-label">ELIGIBILITY RESULTS</span>
         <h2 className="section-headline">Eligibility outcome</h2>
 
@@ -212,17 +212,8 @@ export default function ResultsSection({
                 tabIndex={0}
                 onClick={toggleExpanded}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleExpanded(); } }}
-                className={`result-list-item result-card-rounded ${eligible ? 'eligible' : ''}`}
-                style={{
-                  borderRadius: '14px',
-                  padding: '1.25rem',
-                  background: 'rgba(24, 24, 27, 0.6)',
-                  border: eligible ? '1px solid var(--purple-accent)' : '1px solid var(--zinc-border)',
-                  boxShadow: eligible ? '0 0 20px rgba(168, 85, 247, 0.15)' : 'none',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  cursor: 'pointer',
-                }}
+                className={`result-list-item result-card-rounded ${eligible ? 'eligible' : ''} ${isExpanded ? 'result-card-selected' : ''}`}
+                style={{ padding: '1.25rem', cursor: 'pointer' }}
               >
                 <div
                   style={{

@@ -1,0 +1,207 @@
+/* ─── Splash page: same theme as app ─── */
+.splash-page {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  background: var(--dark-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Background orbs (theme match) */
+.splash-background-orbs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.splash-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.2;
+}
+
+.splash-orb-1 {
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, var(--purple-accent) 0%, transparent 70%);
+  top: -120px;
+  left: -100px;
+  animation: splashFloat 14s ease-in-out infinite;
+}
+
+.splash-orb-2 {
+  width: 360px;
+  height: 360px;
+  background: radial-gradient(circle, var(--blue-accent) 0%, transparent 70%);
+  bottom: -80px;
+  right: -80px;
+  animation: splashFloat 18s ease-in-out infinite reverse;
+  animation-delay: 3s;
+}
+
+@keyframes splashFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(20px, -15px) scale(1.05); }
+  66% { transform: translate(-15px, 10px) scale(0.98); }
+}
+
+/* Icon containers: positioned absolutely, animate in */
+.splash-icons {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.splash-icon {
+  position: absolute;
+  left: var(--splash-x);
+  top: var(--splash-y);
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  animation: splashIconIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation-delay: var(--splash-delay);
+}
+
+.splash-icon-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: rgba(24, 24, 27, 0.7);
+  border: 1px solid var(--zinc-border);
+  box-shadow: 0 0 24px rgba(168, 85, 247, 0.2);
+  transition: color 0.2s;
+}
+
+.splash-icon-svg {
+  width: 32px;
+  height: 32px;
+}
+
+.splash-icon:nth-child(even) .splash-icon-inner {
+  color: var(--blue-accent) !important;
+}
+
+@keyframes splashIconIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0) rotate(-12deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+}
+
+/* Gentle float after icons are in */
+.splash-icon {
+  animation: splashIconIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+             splashIconFloat 3s ease-in-out infinite;
+  animation-delay: var(--splash-delay), 1.6s;
+}
+
+@keyframes splashIconFloat {
+  0%, 100% { transform: translate(-50%, -50%) scale(1) translateY(0); }
+  50% { transform: translate(-50%, -50%) scale(1) translateY(-6px); }
+}
+
+/* Title: pop in after icons */
+.splash-title-wrap {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 2rem;
+  opacity: 0;
+  transform: scale(0.85);
+  animation: splashTitleIn 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation-delay: 0.9s;
+}
+
+.splash-title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: var(--white);
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  background: linear-gradient(135deg, var(--white) 0%, var(--purple-light) 50%, var(--purple-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.splash-subtitle {
+  font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+  color: var(--zinc-400);
+  font-weight: 500;
+}
+
+.splash-message {
+  max-width: 32rem;
+  margin: 1.25rem auto 0;
+  font-size: clamp(0.85rem, 1.2vw, 1rem);
+  color: var(--zinc-400);
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+/* Bottom progress bar */
+.splash-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--zinc-border);
+  overflow: hidden;
+}
+
+.splash-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--purple-accent) 0%, var(--blue-accent) 100%);
+  animation: splashProgress 5s linear forwards;
+}
+
+@keyframes splashProgress {
+  to { width: 100%; }
+}
+
+@keyframes splashTitleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-orb,
+  .splash-icon,
+  .splash-title-wrap,
+  .splash-progress-bar {
+    animation: none !important;
+  }
+  .splash-icon {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  .splash-title-wrap {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .splash-progress-bar {
+    width: 100%;
+  }
+}

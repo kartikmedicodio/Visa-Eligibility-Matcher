@@ -10,6 +10,7 @@ export default function CheckEligibilityTab({
   onSelectProfile,
   onCheckEligibility,
   checking,
+  analysisComplete,
   error,
 }) {
   const canSubmit = selectedProfileId && !checking;
@@ -52,14 +53,29 @@ export default function CheckEligibilityTab({
 
       {checking &&
         createPortal(
-          <div className="processing-overlay" role="status" aria-live="polite" aria-label="Analyzing profile">
+          <div
+            className="processing-overlay"
+            role="status"
+            aria-live="polite"
+            aria-label={analysisComplete ? 'Analysis complete' : 'Analyzing profile'}
+          >
             <div className="processing-bubble" aria-hidden="true" />
-            <div className="processing-content">
-              <div className="lottie-loading" aria-hidden="true">
-                <DotLottieReact src={LOTTIE_SRC} loop autoplay style={{ width: 200, height: 200 }} />
-              </div>
-              <div className="processing-title">Analyzing profile...</div>
-              <div className="processing-subtitle">AI is matching profile with petition criteria...</div>
+            <div className={`processing-content ${analysisComplete ? 'processing-complete' : ''}`}>
+              {analysisComplete ? (
+                <div className="processing-done" aria-hidden="true">
+                  <div className="processing-check" />
+                  <div className="processing-title">User analysis complete</div>
+                  <div className="processing-subtitle">Showing eligibility results...</div>
+                </div>
+              ) : (
+                <>
+                  <div className="lottie-loading" aria-hidden="true">
+                    <DotLottieReact src={LOTTIE_SRC} loop autoplay style={{ width: 200, height: 200 }} />
+                  </div>
+                  <div className="processing-title">Analyzing profile...</div>
+                  <div className="processing-subtitle">AI is matching profile with petition criteria...</div>
+                </>
+              )}
             </div>
           </div>,
           document.body

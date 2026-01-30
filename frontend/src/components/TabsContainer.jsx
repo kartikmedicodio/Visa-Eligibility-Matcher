@@ -21,6 +21,7 @@ export default function TabsContainer({
   onSelectPetition,
   onCheckEligibility,
   checking,
+  analysisComplete,
   error,
 }) {
   return (
@@ -76,6 +77,7 @@ export default function TabsContainer({
             onSelectProfile={onSelectProfile}
             onCheckEligibility={onCheckEligibility}
             checking={checking}
+            analysisComplete={analysisComplete}
             error={error}
           />
         </div>

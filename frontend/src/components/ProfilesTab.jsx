@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { PassportIcon } from './VisaVisuals';
+import { UserIcon } from './VisaVisuals';
 import SectionInView from './SectionInView';
 
 function ProfileDetailModal({ profile, onClose }) {
@@ -57,7 +57,7 @@ export default function ProfilesTab({ profiles, loading, selectedProfileId, onSe
             >
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '0.75rem' }}>
                 <div style={{ width: 40, height: 40, flexShrink: 0, color: 'var(--purple-accent)' }}>
-                  <PassportIcon id={`profile-${profile.profile_id}`} />
+                  <UserIcon id={`profile-${profile.profile_id}`} />
                 </div>
                 <div style={{ minWidth: 0 }}>
                   <div style={{ fontWeight: 600, color: 'var(--white)', marginBottom: '0.25rem' }}>{profile.full_name}</div>

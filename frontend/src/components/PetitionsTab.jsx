@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { VisaStampIcon } from './VisaVisuals';
+import { DocumentIcon } from './VisaVisuals';
 import SectionInView from './SectionInView';
 
 function formatRequirementValue(value) {
@@ -99,7 +99,7 @@ export default function PetitionsTab({ petitions, loading, selectedPetitionId, o
             >
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '0.75rem' }}>
                 <div style={{ width: 40, height: 40, flexShrink: 0, color: 'var(--purple-accent)' }}>
-                  <VisaStampIcon id={`petition-${petition.petition_id}`} />
+                  <DocumentIcon id={`petition-${petition.petition_id}`} />
                 </div>
                 <div style={{ minWidth: 0 }}>
                   <div style={{ fontWeight: 600, color: 'var(--white)', marginBottom: '0.25rem' }}>
