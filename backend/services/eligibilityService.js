@@ -21,41 +21,44 @@ class EligibilityService {
       throw new Error(`Petition ${petitionId} not found`);
     }
 
-    const results = [];
+    // Filter out null petitions
+    const validPetitions = petitions.filter(p => p !== null);
 
-    for (const petition of petitions) {
-      if (!petition) continue;
+    try {
+      // Use the new prompt that evaluates all petitions at once
+      const matchingResult = await this.checkEligibilityWithNormalization(profile, validPetitions);
       
-      try {
-        const result = await this.checkSingleEligibility(profile, petition);
-        results.push({
-          petition_id: petition.petition_id,
-          petition: {
-            country: petition.country,
-            visa_type: petition.visa_type,
-            category: petition.category
-          },
-          ...result
-        });
-      } catch (error) {
-        console.error(`Error checking eligibility for petition ${petition.petition_id}:`, error);
-        results.push({
-          petition_id: petition.petition_id,
-          error: error.message,
-          score: 0,
-          eligible: false
-        });
-      }
+      // Transform the new format to match frontend expectations
+      const results = this.transformMatchingResults(matchingResult, validPetitions);
+      
+      // Sort by tie_breaker_rank or score descending
+      results.sort((a, b) => {
+        if (a.tie_breaker_rank !== undefined && b.tie_breaker_rank !== undefined) {
+          return a.tie_breaker_rank - b.tie_breaker_rank;
+        }
+        return (b.score || 0) - (a.score || 0);
+      });
+
+      return results;
+    } catch (error) {
+      console.error('Error checking eligibility:', error);
+      // Fallback: return error for each petition
+      return validPetitions.map(petition => ({
+        petition_id: petition.petition_id,
+        petition: {
+          country: petition.country,
+          visa_type: petition.visa_type,
+          category: petition.category
+        },
+        error: error.message,
+        score: 0,
+        eligible: false
+      }));
     }
-
-    // Sort by score descending
-    results.sort((a, b) => (b.score || 0) - (a.score || 0));
-
-    return results;
   }
 
-  async checkSingleEligibility(profile, petition) {
-    const prompt = this.buildPrompt(profile, petition);
+  async checkEligibilityWithNormalization(profile, petitions) {
+    const prompt = this.buildPrompt(profile, petitions);
 
     try {
       const response = await openai.chat.completions.create({
@@ -63,7 +66,13 @@ class EligibilityService {
         messages: [
           {
             role: "system",
-            content: "You are an expert immigration lawyer specializing in visa eligibility assessment. Analyze profiles against petition criteria and provide detailed, accurate scoring and explanations. You MUST respond with ONLY valid JSON, no markdown, no code blocks, just the raw JSON object."
+            content: `You are an expert immigration petition matching engine.
+You operate as a deterministic, rules-first evaluator, not a conversational assistant.
+
+Your responsibility includes NORMALIZING and INTERPRETING profile attributes
+that may vary by country, system, or convention.
+
+You MUST respond with ONLY valid JSON, no markdown, no code blocks, just the raw JSON object.`
           },
           {
             role: "user",
@@ -91,78 +100,283 @@ class EligibilityService {
       
       const result = JSON.parse(jsonContent);
 
-      return {
-        score: result.score || 0,
-        eligible: result.eligible || false,
-        breakdown: result.breakdown || {},
-        overallReason: result.overallReason || "",
-        disqualifiers: result.disqualifiers || [],
-        recommendations: result.recommendations || []
-      };
+      // Validate structure
+      if (!result.matching_results || !Array.isArray(result.matching_results) || result.matching_results.length === 0) {
+        throw new Error('Invalid response format: missing matching_results');
+      }
+
+      return result.matching_results[0]; // Return first profile result
     } catch (error) {
       console.error('OpenAI API error:', error);
       throw new Error(`Failed to check eligibility: ${error.message}`);
     }
   }
 
-  buildPrompt(profile, petition) {
-    return `Analyze the following profile against the petition criteria and provide a detailed eligibility assessment.
+  transformMatchingResults(matchingResult, petitions) {
+    const results = [];
+    const petitionMap = new Map(petitions.map(p => [p.petition_id, p]));
 
-PROFILE DATA:
-${JSON.stringify(profile, null, 2)}
+    // Process matched petitions
+    if (matchingResult.matched_petitions && Array.isArray(matchingResult.matched_petitions)) {
+      matchingResult.matched_petitions.forEach(match => {
+        const petition = petitionMap.get(match.petition_id);
+        if (!petition) return;
 
-PETITION DATA:
-${JSON.stringify(petition, null, 2)}
+        // Map match_strength to score and eligible
+        const { score, eligible } = this.mapMatchStrengthToScore(match.match_strength);
 
-INSTRUCTIONS:
-1. Evaluate the profile against ALL hard requirements, soft requirements, and disqualifiers
-2. Calculate a matching score from 0-100 based on:
-   - Exact matches for hard requirements (weight: 40%)
-   - Partial matches for soft requirements (weight: 30%)
-   - Skills and experience alignment (weight: 20%)
-   - Visa status compatibility (weight: 10%)
-3. Check for any disqualifiers - if any disqualifier applies, the profile is NOT eligible
-4. Consider edge cases mentioned in the petition's edge_case_handling
-5. Provide detailed breakdown by category
-
-CRITICAL: You MUST respond with ONLY valid JSON. Do not include markdown code blocks, explanations outside the JSON, or any other text. Return ONLY the JSON object.
-
-RESPONSE FORMAT (JSON ONLY):
-{
-  "score": <number 0-100>,
-  "eligible": <boolean>,
-  "breakdown": {
-    "hard_requirements": {
-      "score": <number>,
-      "max_score": <number>,
-      "match_details": "<explanation>",
-      "matched_items": [<list of matched requirements>],
-      "missing_items": [<list of missing requirements>]
-    },
-    "soft_requirements": {
-      "score": <number>,
-      "max_score": <number>,
-      "match_details": "<explanation>",
-      "matched_items": [<list>],
-      "missing_items": [<list>]
-    },
-    "skills_experience": {
-      "score": <number>,
-      "max_score": <number>,
-      "match_details": "<explanation>"
-    },
-    "visa_status": {
-      "score": <number>,
-      "max_score": <number>,
-      "match_details": "<explanation>"
+        results.push({
+          petition_id: match.petition_id,
+          petition: {
+            country: match.country || petition.country,
+            visa_type: match.visa_type || petition.visa_type,
+            category: petition.category
+          },
+          score,
+          eligible,
+          match_strength: match.match_strength,
+          confidence_level: match.confidence_level,
+          reasoning: match.reasoning || [],
+          tie_breaker_rank: match.tie_breaker_rank,
+          overallReason: match.reasoning ? match.reasoning.join(' ') : '',
+          breakdown: this.createBreakdownFromReasoning(match.reasoning),
+          disqualifiers: [],
+          recommendations: []
+        });
+      });
     }
-  },
-  "overallReason": "<detailed explanation of why this profile matches or doesn't match, including specific reasons>",
-  "disqualifiers": [<list of disqualifiers that apply, if any>],
-  "recommendations": [<actionable recommendations for improving eligibility, if applicable>]
+
+    // Process rejected petitions
+    if (matchingResult.rejected_petitions && Array.isArray(matchingResult.rejected_petitions)) {
+      matchingResult.rejected_petitions.forEach(rejected => {
+        const petition = petitionMap.get(rejected.petition_id);
+        if (!petition) return;
+
+        results.push({
+          petition_id: rejected.petition_id,
+          petition: {
+            country: petition.country,
+            visa_type: rejected.visa_type || petition.visa_type,
+            category: petition.category
+          },
+          score: 0,
+          eligible: false,
+          match_strength: 'Rejected',
+          confidence_level: 'High',
+          reasoning: [rejected.reason],
+          overallReason: rejected.reason,
+          breakdown: {},
+          disqualifiers: [rejected.reason],
+          recommendations: []
+        });
+      });
+    }
+
+    return results;
+  }
+
+  mapMatchStrengthToScore(matchStrength) {
+    switch (matchStrength) {
+      case 'Very Strong':
+        return { score: 90, eligible: true };
+      case 'Strong':
+        return { score: 75, eligible: true };
+      case 'Weak':
+        return { score: 45, eligible: true };
+      case 'Rejected':
+        return { score: 0, eligible: false };
+      default:
+        return { score: 50, eligible: true };
+    }
+  }
+
+  createBreakdownFromReasoning(reasoning) {
+    if (!reasoning || !Array.isArray(reasoning)) {
+      return {};
+    }
+
+    return {
+      normalization: {
+        score: 0,
+        max_score: 0,
+        match_details: reasoning.join(' ')
+      },
+      evaluation: {
+        score: 0,
+        max_score: 0,
+        match_details: 'See reasoning above'
+      }
+    };
+  }
+
+  buildPrompt(profile, petitions) {
+    return `You are an expert immigration petition matching engine.
+You operate as a deterministic, rules-first evaluator, not a conversational assistant.
+
+Your responsibility includes NORMALIZING and INTERPRETING profile attributes
+that may vary by country, system, or convention.
+
+---
+
+INPUTS
+1. profile_data: ${JSON.stringify(profile, null, 2)}
+2. petition_data: ${JSON.stringify(petitions, null, 2)}
+
+Inputs are provided dynamically and may contain country-specific definitions,
+terminology differences, or implicit standards.
+
+---
+
+OBJECTIVE
+For the profile in profile_data:
+- Evaluate ALL petitions in petition_data
+- Match profile to petitions accurately
+- Handle cross-country, cross-system, and cross-standard differences correctly
+- Produce a clear, auditable matching output
+
+---
+
+NORMALIZATION & EQUIVALENCY LAYER (MANDATORY)
+
+Before evaluation, perform a **Normalization Pass** on profile data.
+
+This pass MUST:
+- Standardize values
+- Interpret equivalencies
+- Avoid literal string comparison where meaning differs by context
+
+### 1️⃣ EDUCATION NORMALIZATION
+Interpret education levels based on **country-of-education norms**, not labels alone.
+
+- Professional degrees (e.g., MBBS, B.Tech) must be mapped to equivalent levels
+
+Rule:
+- Treat education as "Equivalent Bachelor or higher" if duration, rigor, and field meet petition expectations
+- Do NOT reject solely due to naming differences
+
+### 2️⃣ EXPERIENCE & SKILL EQUIVALENCY
+Normalize experience considering:
+- Country-specific job role naming
+- Industry conventions
+- Academic vs industry experience (where applicable)
+
+Example:
+- "Research Assistant" in academia may count as skilled experience if petition allows
+- Internship vs full-time distinctions must be interpreted cautiously
+
+### 3️⃣ LICENSING, TESTS & CREDENTIALS
+Normalize certifications, language tests, and licenses:
+- Different test names (IELTS, CELPIP, TOEFL) may satisfy the same requirement
+- Scores must be interpreted relative to petition expectations
+- Local licenses may be equivalent to international ones if functionally comparable
+
+### 4️⃣ LEGAL & EMPLOYMENT CONTEXT NORMALIZATION
+Interpret legal and employment attributes contextually:
+- Employer sponsorship terminology may differ by country
+- Job offers may be implied via contracts or nomination letters
+- Immigration status names may differ but represent similar conditions
+
+### 5️⃣ BUSINESS & ENTREPRENEURSHIP CONTEXT
+Normalize business signals:
+- Startup accelerators, incubators, VC backing may be country-specific
+- Government-recognized entities should be treated as equivalent if functionally similar
+
+### 6️⃣ GENERAL RULE (CRITICAL)
+NEVER rely on:
+- Label names alone
+- Country-specific jargon
+- Literal string equality
+
+ALWAYS evaluate:
+- Functional equivalence
+- Intent
+- Outcome relevance to petition requirements
+
+If equivalency is unclear:
+- Mark the match as "Weak" rather than rejecting outright
+
+---
+
+EVALUATION LOGIC (STRICT ORDER)
+
+STEP 1: TARGET COUNTRY FILTER
+Evaluate petitions only if:
+petition.country ∈ profile.target_countries
+
+STEP 2: HARD REQUIREMENT CHECK
+After normalization, verify ALL hard_requirements.
+If any fail → reject.
+
+STEP 3: DISQUALIFIER CHECK
+If any disqualifier applies → reject.
+
+STEP 4: SOFT REQUIREMENT SCORING
+Evaluate alignment using normalized values.
+
+STEP 5: EDGE CASE HANDLING
+Apply petition.edge_case_handling rules explicitly.
+
+STEP 6: TIE-BREAKER RESOLUTION
+Resolve overlaps using:
+1. tie_breaker_priority
+2. confidence_level
+3. Strength of normalized alignment
+
+---
+
+MATCH STRENGTH CLASSIFICATION
+- Very Strong
+- Strong
+- Weak
+- Rejected
+
+---
+
+OUTPUT FORMAT (MANDATORY)
+
+Return ONE JSON object ONLY:
+
+{
+  "matching_results": [
+    {
+      "profile_id": "${profile.profile_id}",
+      "matched_petitions": [
+        {
+          "petition_id": <number>,
+          "visa_type": "<string>",
+          "country": "<string>",
+          "match_strength": "<Very Strong | Strong | Weak>",
+          "confidence_level": "<Low | Medium | High>",
+          "reasoning": [
+            "<explicit normalized reasoning>"
+          ],
+          "tie_breaker_rank": <number>
+        }
+      ],
+      "rejected_petitions": [
+        {
+          "petition_id": <number>,
+          "visa_type": "<string>",
+          "reason": "<explicit normalized rejection reason>"
+        }
+      ]
+    }
+  ]
 }
 
-Be thorough, accurate, and provide specific details in your analysis. Remember: Return ONLY the JSON object, nothing else.`;
+---
+
+CRITICAL CONSTRAINTS
+- Do NOT invent data
+- Do NOT assume equivalence without justification
+- Do NOT change the output schema
+- Do NOT output explanations outside JSON
+- Be conservative: downgrade confidence rather than reject when uncertain
+
+---
+
+BEGIN PROCESSING USING:
+profile_data, petition_data`;
   }
 }
 

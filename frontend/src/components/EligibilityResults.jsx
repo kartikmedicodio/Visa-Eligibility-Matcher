@@ -33,6 +33,26 @@ function EligibilityResults({ results }) {
                     {result.petition?.visa_type} - {result.petition?.country}
                   </h3>
                   <p style={{ color: '#666' }}>{result.petition?.category}</p>
+                  {result.match_strength && (
+                    <div style={{ marginTop: '0.5rem' }}>
+                      <span className="tag" style={{ 
+                        background: result.match_strength === 'Very Strong' ? '#d4edda' : 
+                                   result.match_strength === 'Strong' ? '#cfe2ff' :
+                                   result.match_strength === 'Weak' ? '#fff3cd' : '#f8d7da',
+                        color: result.match_strength === 'Very Strong' ? '#155724' :
+                               result.match_strength === 'Strong' ? '#084298' :
+                               result.match_strength === 'Weak' ? '#856404' : '#721c24',
+                        fontWeight: '600'
+                      }}>
+                        Match: {result.match_strength}
+                      </span>
+                      {result.confidence_level && (
+                        <span className="tag" style={{ marginLeft: '0.5rem' }}>
+                          Confidence: {result.confidence_level}
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <div className={`score-badge ${getScoreClass(result.score)}`} style={{ fontSize: '1.5rem', padding: '0.5rem 1rem' }}>
@@ -57,8 +77,19 @@ function EligibilityResults({ results }) {
                 </div>
               </div>
 
+              {result.reasoning && result.reasoning.length > 0 && (
+                <div className="reason-text" style={{ marginTop: '1rem' }}>
+                  <strong>Normalized Reasoning:</strong>
+                  <ul style={{ marginTop: '0.5rem', marginLeft: '1.5rem' }}>
+                    {result.reasoning.map((reason, idx) => (
+                      <li key={idx} style={{ marginBottom: '0.5rem' }}>{reason}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               {result.overallReason && (
-                <div className="reason-text">
+                <div className="reason-text" style={{ marginTop: result.reasoning ? '1rem' : '1rem' }}>
                   <strong>Overall Assessment:</strong>
                   <p style={{ marginTop: '0.5rem' }}>{result.overallReason}</p>
                 </div>
