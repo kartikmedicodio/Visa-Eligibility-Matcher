@@ -206,7 +206,50 @@
         "employee_profile_only": false,
         "founder_without_funding": false
       }
-    }
+    },
+    {
+  "profile_id": "P201",
+  "full_name": "Arjun Mehta",
+  "citizenship": "India",
+  "current_country": "India",
+  "target_countries": ["USA"],
+  "target_profile_type": "Skilled Professional",
+
+  "education": {
+    "highest_level": "B.Tech",
+    "fields": ["Computer Science"]
+  },
+
+  "employment": {
+    "current_role": "Software Engineer",
+    "industry": "Technology",
+    "years_of_experience": 5
+  },
+
+  "achievements": {
+    "extraordinary_ability": false,
+    "international_awards": false,
+    "peer_recognition": false,
+    "media_coverage": false,
+    "high_impact_publications": false
+  },
+
+  "legal_status": {
+    "current_visa": "None"
+  },
+
+  "signals": [
+    "Software Engineer",
+    "Experienced in backend development",
+    "Skilled in cloud technologies"
+  ],
+
+  "edge_case_flags": {
+    "degree_missing_but_experience_high": true,
+    "extraordinary_achievements_present": false
+  }
+}
+
   ]
 }
 
