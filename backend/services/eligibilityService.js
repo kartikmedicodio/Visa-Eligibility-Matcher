@@ -63,19 +63,33 @@ class EligibilityService {
         messages: [
           {
             role: "system",
-            content: "You are an expert immigration lawyer specializing in visa eligibility assessment. Analyze profiles against petition criteria and provide detailed, accurate scoring and explanations."
+            content: "You are an expert immigration lawyer specializing in visa eligibility assessment. Analyze profiles against petition criteria and provide detailed, accurate scoring and explanations. You MUST respond with ONLY valid JSON, no markdown, no code blocks, just the raw JSON object."
           },
           {
             role: "user",
             content: prompt
           }
         ],
-        temperature: 0.3,
-        response_format: { type: "json_object" }
+        temperature: 0.3
       });
 
       const content = response.choices[0].message.content;
-      const result = JSON.parse(content);
+      
+      // Extract JSON from response (handle cases where it might be wrapped in markdown)
+      let jsonContent = content.trim();
+      
+      // Remove markdown code blocks if present
+      if (jsonContent.startsWith('```')) {
+        const lines = jsonContent.split('\n');
+        lines.shift(); // Remove first line (```json or ```)
+        lines.pop(); // Remove last line (```)
+        jsonContent = lines.join('\n');
+      }
+      
+      // Remove any leading/trailing whitespace
+      jsonContent = jsonContent.trim();
+      
+      const result = JSON.parse(jsonContent);
 
       return {
         score: result.score || 0,
@@ -111,7 +125,9 @@ INSTRUCTIONS:
 4. Consider edge cases mentioned in the petition's edge_case_handling
 5. Provide detailed breakdown by category
 
-RESPONSE FORMAT (JSON):
+CRITICAL: You MUST respond with ONLY valid JSON. Do not include markdown code blocks, explanations outside the JSON, or any other text. Return ONLY the JSON object.
+
+RESPONSE FORMAT (JSON ONLY):
 {
   "score": <number 0-100>,
   "eligible": <boolean>,
@@ -146,7 +162,7 @@ RESPONSE FORMAT (JSON):
   "recommendations": [<actionable recommendations for improving eligibility, if applicable>]
 }
 
-Be thorough, accurate, and provide specific details in your analysis.`;
+Be thorough, accurate, and provide specific details in your analysis. Remember: Return ONLY the JSON object, nothing else.`;
   }
 }
 
