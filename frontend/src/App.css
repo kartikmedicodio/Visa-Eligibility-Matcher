@@ -201,7 +201,7 @@
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--zinc-border);
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 1.25rem;
   transition: border-color 0.25s, box-shadow 0.25s;
 }

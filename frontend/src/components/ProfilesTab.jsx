@@ -52,7 +52,7 @@ export default function ProfilesTab({ profiles, loading, selectedProfileId, onSe
               key={profile.profile_id}
               type="button"
               className={`glass-card ${isSelected ? 'selected' : ''}`}
-              style={{ textAlign: 'left', cursor: 'pointer', border: 'none', width: '100%' }}
+              style={{ textAlign: 'left', cursor: 'pointer', width: '100%' }}
               onClick={() => onSelectProfile(profile.profile_id)}
             >
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '0.75rem' }}>

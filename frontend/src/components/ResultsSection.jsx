@@ -194,7 +194,7 @@ export default function ResultsSection({
           Results sorted by matching score (highest first). Click the dropdown to view full details.
         </p>
 
-        <ul className="results-list" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+        <ul className="results-list" style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {results.map((result) => {
             const hasError = result.error;
             const eligible = result.eligible ?? false;
@@ -206,11 +206,15 @@ export default function ResultsSection({
             return (
               <li
                 key={result.petition_id}
-                className={`result-list-item ${eligible ? 'eligible' : ''}`}
+                className={`result-list-item result-card-rounded ${eligible ? 'eligible' : ''}`}
                 style={{
-                  borderBottom: '1px solid var(--zinc-border)',
-                  paddingBottom: '1rem',
-                  marginBottom: '1rem',
+                  borderRadius: '14px',
+                  padding: '1.25rem',
+                  background: 'rgba(24, 24, 27, 0.6)',
+                  border: eligible ? '1px solid var(--purple-accent)' : '1px solid var(--zinc-border)',
+                  boxShadow: eligible ? '0 0 20px rgba(168, 85, 247, 0.15)' : 'none',
+                  backdropFilter: 'blur(12px)',
+                  WebkitBackdropFilter: 'blur(12px)',
                 }}
               >
                 <div

@@ -94,7 +94,7 @@ export default function PetitionsTab({ petitions, loading, selectedPetitionId, o
               key={petition.petition_id}
               type="button"
               className={`glass-card ${isSelected ? 'selected' : ''}`}
-              style={{ textAlign: 'left', cursor: 'pointer', border: 'none', width: '100%' }}
+              style={{ textAlign: 'left', cursor: 'pointer', width: '100%' }}
               onClick={() => onSelectPetition(String(petition.petition_id))}
             >
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '0.75rem' }}>
